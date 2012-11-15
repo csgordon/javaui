@@ -1,0 +1,159 @@
+<project name="GUITypes" default="dist" basedir=".">
+    <description>
+        A pluggable type checker for preventing non-UI threads from accessing UI elements.
+    </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="build.tests" location="tests/build"/>
+  <property name="build.reports" location="reports"/>
+  <property name="dist"  location="dist"/>
+  <property name="jsr308" location="binary"/>
+  <property name="tests" value="tests"/>
+  <property name="tests.junit" value="${tests}/junit-4.7.jar"/>
+  <property name="run.tests.should.fork" value="true"/>
+  <property name="halt.on.test.failure" value="false"/>
+
+  <presetdef name="jsr308.javac">
+    <javac fork="yes" debug="true" debuglevel="lines,vars,source">
+      <compilerarg value="-version"/>
+      <compilerarg value="-J-Xbootclasspath/p:${jsr308}/jsr308-all.jar"/>
+      <compilerarg value="-Xbootclasspath/p:${jsr308}/jdk.jar"/>
+      <compilerarg value="-g"/>
+      <classpath>
+        <pathelement location="${jsr308}/jdk.jar"/>
+      </classpath>
+    </javac>
+  </presetdef>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build.tests}"/>
+  </target>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <jsr308.javac srcdir="${src}" destdir="${build}"/>
+    <copy file="${src}/guitypes/checkers/messages.properties"
+          todir="${build}/guitypes/checkers/"/>
+    <copy file="${src}/guitypes/checkers/jdk.astub"
+          todir="${build}/guitypes/checkers/"/>
+  </target>
+
+  <target name="dist" depends="compile"
+        description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist}/lib/guitypes-${DSTAMP}.jar" basedir="${build}"/>
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${build.tests}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <target name="build-tests" depends="dist" description="Compile tests">
+      <pathconvert pathsep=" " property="src.tests">
+          <path>
+              <fileset dir="${tests}">
+                  <!-- Ultimately this next line should grab the test drivers, rather than the
+                       test  program. -->
+                  <include name="ui/testdrivers/*.java"/>
+                  <!-- This shouldn't be necessary, but I'm working around some classpath / build
+                  order issues -->
+                  <include name="ui/tests/*.java"/>
+                  <include name="ui/tests/packagetests/*.java"/>
+              </fileset>
+          </path>
+      </pathconvert>
+      <java fork="true"
+            failonerror="true"
+            classpath="${jsr308}/jsr308-all.jar:${jsr308}/jdk.jar:${tests.junit}:${dist}/lib/guitypes-${DSTAMP}.jar"
+            classname="com.sun.tools.javac.Main">
+          <jvmarg line="-Xbootclasspath/p:${jsr308}/jsr308-all.jar"/>
+          <arg value="-g"/>
+          <arg line="-sourcepath ${tests}"/>
+          <arg line="-d ${build.tests}"/>
+          <arg line="${src.tests}"/>
+      </java>
+  </target>
+
+    <!-- Per the <test> element, output goes to ${build.reports} -->
+    <target name="-run-tests" description="Generalized test runner">
+        <mkdir dir="${build.reports}"/>
+        <junit fork="${run.tests.should.fork}"
+            dir="${basedir}"
+            printsummary="true"
+            haltonfailure="${halt.on.test.failure}">
+            <!--jvmarg line="-Xbootclasspath/p:${jsr308}/jdk.jar:${jsr308}/jsr308-all.jar"/-->
+            <jvmarg line="-Xbootclasspath/p:${tests.junit}:${jsr308}/jsr308-all.jar"/>
+            <jvmarg line="-ea"/>
+
+            <classpath>
+                <pathelement path="${jsr308}/jsr308-all.jar"/>
+                <pathelement path="${jsr308}/jdk.jar"/>
+                <pathelement path="${dist}/lib/guitypes-${DSTAMP}.jar"/>
+                <pathelement path="${build.tests}"/>
+                <!--pathelement path="${build.tests}/testclasses"/-->
+                <pathelement path="${tests.junit}"/>
+                <pathelement path="${build}"/>
+            </classpath>
+            <formatter type="xml"/>
+            <formatter type="brief" usefile="false"/>
+
+            <test name="${param}" todir="${build.reports}"/>
+        </junit>
+    </target>
+
+    <target name="test" depends="dist,build-tests"
+      description="Run tests for all checkers">
+
+      <!-- Copied from -run-tests target -->
+      <mkdir dir="${build.reports}"/>
+      <junit fork="${run.tests.should.fork}"
+            dir="${basedir}"
+          printsummary="true"
+          haltonfailure="${halt.on.test.failure}">
+          <!--jvmarg line="-Xbootclasspath/p:${jsr308}/jdk.jar:${jsr308}/jsr308-all.jar"/-->
+          <!--jvmarg line="-Xbootclasspath/p:${jsr308}/jsr308-all.jar"/-->
+          <jvmarg line="-Xbootclasspath/p:${tests.junit}:${jsr308}/jsr308-all.jar"/>
+          <jvmarg line="-ea"/>
+
+          <classpath>
+              <pathelement path="${jsr308}/jsr308-all.jar"/>
+              <pathelement path="${jsr308}/jdk.jar"/>
+              <pathelement path="${dist}/lib/guitypes-${DSTAMP}.jar"/>
+              <pathelement path="${build.tests}"/>
+              <!--pathelement path="${build.tests}/testclasses"/-->
+              <pathelement path="${tests.junit}"/>
+              <pathelement path="${build}"/>
+          </classpath>
+          <formatter type="xml"/>
+          <formatter type="brief" usefile="false"/>
+
+          <batchtest todir="${build.reports}">
+              <fileset dir="${tests}">
+                  <include name="ui/testdrivers/UITestDriver.java"/>
+                  <!--include name="**/*.java"/-->
+                  <!--exclude name="**/*.java"/-->
+
+                  <!-- Framework classes -->
+                  <!--exclude name="**/CheckerTest.java"/>
+                  <exclude name="**/ParameterizedCheckerTest.java"/-->
+                  <!--exclude name="testdrivers/*.java"/-->
+              </fileset>
+          </batchtest>
+      </junit>
+  </target>
+
+
+</project>
