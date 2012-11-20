@@ -2,8 +2,8 @@ import guitypes.checkers.quals.*;
 
 // Should not inherit @UI!
 public class UIChild extends UIParent {
-    @Override public void doingUIStuff() {
-        // Should inherit @UI on this method from the parent's class annotation
+    @Override @UIEffect public void doingUIStuff() {
+        // Overriding UI with UI
         thingy.dangerous();
     } 
     
