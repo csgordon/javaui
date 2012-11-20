@@ -231,29 +231,6 @@ public class GUIEffectsTypeFactory extends
         }
 
         return new Effect(SafeEffect.class);
-        // TODO: I don't think the code below is necessary or correct
-        ////Effect.EffectRange range = findInheritedEffectRange(targetClassElt, methodElt);
-
-        ////Effect bound = null;
-        ////// A method's maximum effect cannot exceed the least of its inherited effects, or safe if it's new.
-        ////if (range != null) {
-        ////    bound = range.min;
-        ////} else {
-        ////    if (isUIType(targetClassElt)) {
-        ////        bound = new Effect(UIEffect.class);
-        ////    } else {
-        ////        bound = new Effect(SafeEffect.class);
-        ////    }
-        ////}
-        ////// We must also handle instantiating generic methods
-        ////if (bound.isPoly()) {
-        ////    if (getDeclAnnotation(targetClassElt, UI.class) != null) {
-        ////        bound = new Effect(UIEffect.class); // UI instantiation
-        ////    } else if (getDeclAnnotation(targetClassElt, AlwaysSafe.class) != null) {
-        ////        bound = new Effect(SafeEffect.class); // safe instantiation
-        ////    }
-        ////}
-        ////return bound; 
     }
 
     public boolean hasAnnotationByName(AnnotatedTypeMirror m, Class<?> c) {
