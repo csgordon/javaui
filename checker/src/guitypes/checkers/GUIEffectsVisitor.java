@@ -47,18 +47,20 @@ public class GUIEffectsVisitor extends BaseTypeVisitor<GUIEffectsChecker> {
         getypeFactory = (GUIEffectsTypeFactory)atypeFactory;
     }
 
+    // This is a framework method that checks receiver annotations on invocation.
     // The issue is that the receiver implicitly receives an @AlwaysSafe anno, so calls on @UI
     // references fail because the framework doesn't implicitly upcast the receiver (which in
     // general wouldn't be sound).
-    // TODO: Fix method receiver defaults: method-polymorphic for any polymorphic method, UI
-    //       for any UI instantiations, safe otherwise
+    // TODO: Fix method receiver defaults: see comment below
     @Override
     protected boolean checkMethodInvocability(AnnotatedExecutableType method,
             MethodInvocationTree node) {
-        // The inherited version of this complains about invoking methods of @UI instantiations of
-        // classes, which by default are annotated @AlwaysSafe, which for data type qualifiers is
-        // reasonable, but it not what we want, since we want .
-        // TODO: Undo this hack!
+        // The inherited version of this complains about invoking methods on @UI instantiations of
+        // classes, which by default are annotated with @AlwaysSafe receivers.  But we're allowing
+        // this, for now.  (The real invocation check is performed in visitMethodInvocation().)
+        // Perhaps the right fix is to simply have the type factory make all implicit receiver
+        // annotations @PolyUI - it would work right for methods with explicit effects, including
+        // for safe methods of a class with polymorphic methods...
         return true;
     }
 
@@ -111,11 +113,6 @@ public class GUIEffectsVisitor extends BaseTypeVisitor<GUIEffectsChecker> {
         if (debugSpew)
             System.err.println("callerElt found");
 
-        // TODO: This line may be a bug.  getDeclaredEffect returns the MIN declared effect (the method was written to find the lower bound
-        //       to enforce on method decls).  For a given type though, it seems like this should be MAX, because if it inherits from
-        //       two interfaces that declare the same method with different effects, we want the stronger one here.
-        // OR maybe this is okay - we should be calling this and getting the effect bound enforced on all implementations of this dispatch target,
-        // which should be fine.
         Effect targetEffect = getypeFactory.getDeclaredEffect(methodElt);
         //System.err.println("Dispatching method "+node+"on "+node.getMethodSelect());
         if (targetEffect.isPoly()) {
@@ -124,40 +121,12 @@ public class GUIEffectsVisitor extends BaseTypeVisitor<GUIEffectsChecker> {
             if (node.getMethodSelect().getKind() == Tree.Kind.MEMBER_SELECT) {
                 ExpressionTree src = ((MemberSelectTree)node.getMethodSelect()).getExpression();
                 srcType = atypeFactory.fromExpression(src);
-                //System.err.println("For member select dispatch, receiver type is "+srcType);
             } else {
                 // Tree.Kind.IDENTIFIER, e.g. a direct call like "super()"
-                //AnnotatedTypeMirror.AnnotatedExecutableType methType = atypeFactory.fromElement(callerElt);
-                //srcType = methType.getReceiverType();
                 srcType = visitorState.getMethodReceiver();
-                //System.err.println("For direct dispatch, receiver type is "+srcType);
-                //System.err.println("DIRECT: safe/ui/poly="+srcType.hasAnnotation(AlwaysSafe.class)+"/"+srcType.hasAnnotation(UI.class)+"/"+srcType.hasAnnotation(PolyUI.class));
-                //System.err.println("BYNAME: safe/ui/poly="+hasAnnotationByName(srcType,AlwaysSafe.class)+"/"+hasAnnotationByName(srcType,UI.class)+"/"+hasAnnotationByName(srcType,PolyUI.class));
-                //System.err.println("isAnnotated = "+srcType.isAnnotated());
-                //if (srcType.isAnnotated()) {
-                //    System.err.print("Annotated with: ");
-                //    for (AnnotationMirror a : srcType.getAnnotations()) {
-                //        System.err.println(a+"("+AnnotationUtils.annotationName(a)+"). annotationName(a).equals(...getName(...))="+
-                //                                AnnotationUtils.annotationName(a).equals(checker.getEnv().getElementUtils().getName(AlwaysSafe.class.getCanonicalName()))+
-                //                                "|"+checker.getEnv().getElementUtils().getName(AlwaysSafe.class.getCanonicalName()).equals(AnnotationUtils.annotationName(a)));
-                //        System.err.println(a+"("+AnnotationUtils.annotationName(a)+"). annotationName(a).contentEquals(...getName(...))="+
-                //                                AnnotationUtils.annotationName(a).contentEquals(checker.getEnv().getElementUtils().getName(AlwaysSafe.class.getCanonicalName()))+
-                //                                "|"+checker.getEnv().getElementUtils().getName(AlwaysSafe.class.getCanonicalName()).contentEquals(AnnotationUtils.annotationName(a)));
-                //    }
-                //    System.err.println();
-                //    System.err.println("getAnnotation(AlwaysSafe.class)="+srcType.getAnnotation(AlwaysSafe.class));
-                //    System.err.println("AlwaysSafe.class.getCanonicalName()="+AlwaysSafe.class.getCanonicalName());
-                //    System.err.println("env.getElementUtils().getName(annotationName)="+checker.getEnv().getElementUtils().getName(AlwaysSafe.class.getCanonicalName()));
-                //}
             }
 
             // Instantiate type-polymorphic effects
-            //System.err.println("Dispatching method of type "+srcType);
-            //System.err.println("Calling "+node.getMethodSelect()+"("+node.getMethodSelect().getKind()+")"+" with args:");
-            //for (ExpressionTree e : node.getArguments()) {
-            //    System.err.println("    "+e);
-            //}
-            //System.err.println("safe/ui/poly="+srcType.hasAnnotation(AlwaysSafe.class)+"/"+srcType.hasAnnotation(UI.class)+"/"+srcType.hasAnnotation(PolyUI.class));
             if (getypeFactory.hasAnnotationByName(srcType,AlwaysSafe.class)/*srcType.hasAnnotation(AlwaysSafe.class)*/) {
                 //System.err.println("Instantiating effect as Safe");
                 targetEffect = new Effect(SafeEffect.class);

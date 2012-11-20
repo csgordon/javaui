@@ -401,6 +401,7 @@ public class GUIEffectsTypeFactory extends
             return super.visitMethod(node, type);
         }
 
+        // TODO: Delete this method and test that behavior (and results!) are preserved
         @Override
         public Void visitVariable(VariableTree node, AnnotatedTypeMirror type) {
             //if (node.getName().contentEquals("this")) {
