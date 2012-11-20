@@ -6,3 +6,6 @@ build/
 *.jar
 *.war
 *.ear
+
+# Editor temp files #
+*.swp
