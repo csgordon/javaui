@@ -31,14 +31,9 @@ import com.sun.source.tree.*;
 import guitypes.checkers.quals.*;
 
 /**
- * Annotated type factory for the Units Checker.
+ * Annotated type factory for the GUIEfffects Checker
  *
- * Handles multiple names for the same unit, with different prefixes,
- * e.g. @kg is the same as @g(Prefix.kilo).
- *
- * Supports relations between units, e.g. if "m" is a variable of type "@m" and
- * "s" is a variable of type "@s", the division "m/s" is automatically annotated
- * as "mPERs", the correct unit for the result.
+ * Handles determining the effect of a given method, and fixing up polymorphic receiver annotations
  */
 public class GUIEffectsTypeFactory extends
         BasicAnnotatedTypeFactory<GUIEffectsChecker> {
