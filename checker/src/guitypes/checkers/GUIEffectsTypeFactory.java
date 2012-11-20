@@ -196,13 +196,7 @@ public class GUIEffectsTypeFactory extends
             return new Effect(PolyUIEffect.class);
         }
 
-        // Default to @AlwaysSafe constructors
-        // TODO: Reconsider this: Nearly every @UIType I annotate, I also annotate each ctor with @UIEffect
-        /*if (targetUIP == null && methodElt.getKind() == ElementKind.CONSTRUCTOR) {
-            if (debugSpew) System.err.println("Making ctor " + methodElt + " @SafeEffect");
-            return new Effect(isPolymorphicType(targetClassElt) ? PolyUIEffect.class : SafeEffect.class);
-        } else*/ if (isUIType(targetClassElt)) {
-            // XXX: Check that this is really the annotation override semantics we want for constructors
+        if (isUIType(targetClassElt)) {
             return new Effect(UIEffect.class);
         }
 
