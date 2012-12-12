@@ -1,6 +1,9 @@
 import guitypes.checkers.quals.*;
 
 /*
+ * NOTE: This is a test for a feature we do not yet implement.  Missing this wasn't an issue in case studies,
+ * but this would be nice to have.
+ *
  * A test class for verifying correct functionality for classes implementing multiple
  * effect-polymorphic supertypes, each with different qualifiers.
  *
