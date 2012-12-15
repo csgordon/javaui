@@ -10,6 +10,21 @@ with the UI effect.
 
 Of course, things get a bit more complicated with polymorphism.
 
+ECOOP Submission
+----------------
+The extended technical report will be uploaded here closer to submission.
+
+The annotated subject programs are available:
+
+* EclipseRunner: https://bitbucket.org/csgordon/eclipserunner
+* HudsonEclipse: https://bitbucket.org/csgordon/hudson-eclipse
+* S3dropbox: https://bitbucket.org/csgordon/s3dropbox
+* SudokuSolver: https://bitbucket.org/csgordon/sudoku-solver
+* Eclipse Color Theme: https://bitbucket.org/csgordon/eclipse-color-theme
+* LogViewer: https://bitbucket.org/csgordon/logviewer
+* JVMMonitor: https://bitbucket.org/csgordon/jvmmonitor
+* Subclipse: https://bitbucket.org/csgordon/subclipse
+
 Implementation
 --------------
 The type system is built on top of the Checker Framework (http://types.cs.washington.edu).  It
