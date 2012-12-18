@@ -12,7 +12,8 @@ Of course, things get a bit more complicated with polymorphism.
 
 ECOOP Submission
 ----------------
-The extended technical report will be uploaded here closer to submission.
+The extended technical report is available at:
+http://homes.cs.washington.edu/~csgordon/drafts/javaui_tr.pdf
 
 The annotated subject programs are available:
 
