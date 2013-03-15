@@ -26,6 +26,9 @@ The annotated subject programs are available:
 * JVMMonitor: https://bitbucket.org/csgordon/jvmmonitor
 * Subclipse: https://bitbucket.org/csgordon/subclipse
 
+The subject programs were checked against Eclipse 3.7 on Ubuntu 12.10, and the scripts to run JavaUI
+over the subject programs hard-code paths to relevant JARs.
+
 Implementation
 --------------
 The type system is built on top of the Checker Framework (http://types.cs.washington.edu).  It
