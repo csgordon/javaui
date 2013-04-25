@@ -10,10 +10,12 @@ with the UI effect.
 
 Of course, things get a bit more complicated with polymorphism.
 
-ECOOP Submission
+ECOOP 2013 Paper
 ----------------
-The extended technical report is available at:
-http://homes.cs.washington.edu/~csgordon/drafts/javaui_tr.pdf
+JavaUI is described in detail in an ECOOP 2013 paper titled
+"JavaUI: Effects for Controlling UI Object Access."
+The paper and extended technical report are available from
+the first author's [homepage](http://homes.cs.washington.edu/~csgordon).
 
 The annotated subject programs are available:
 
