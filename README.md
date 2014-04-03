@@ -4,6 +4,11 @@ This repository contains a prototype implementation of a Java effect system to e
 of threading access errors from accessing UI objects from threads other than the UI event loop
 thread.
 
+<b>This is an archival version of the code, corresponding to the ECOOP'13 paper mentioned below.</b>
+
+<b>The current version has been incorporated into the <a href="http://checker-framework.org">Checker
+Framework</a>.</b>
+
 Methods that access GUI objects are assigned the *UI effect*.  Methods that do not access such
 objects are given the *Safe effect*, and methods annotated as safe are not permitted to call methods
 with the UI effect.
