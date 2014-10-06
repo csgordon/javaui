@@ -6,7 +6,7 @@ thread.
 
 <b>This is an archival version of the code, corresponding to the ECOOP'13 paper mentioned below.</b>
 
-<b>The current version has been incorporated into the <a href="http://types.cs.washington.edu/checker-framework/current/checker-framework-manual.html#guieffect-checker">Checker
+<b>The current version is distributed with the <a href="http://types.cs.washington.edu/checker-framework/current/checker-framework-manual.html#guieffect-checker">Checker
 Framework</a>.</b>
 
 Methods that access GUI objects are assigned the *UI effect*.  Methods that do not access such
